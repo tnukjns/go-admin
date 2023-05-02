@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -341,15 +342,17 @@ func (t UserModel) WithMenus() UserModel {
 	var menuIds []int64
 
 	for _, mid := range menuIdsModel {
-		if parentId, ok := mid["parent_id"].(int64); ok && parentId != 0 {
+		fmt.Printf("Type of parent_id: %T, Type of menu_id: %T\n", mid["parent_id"], mid["menu_id"])
+
+		if parentId, ok := mid["parent_id"].(uint); ok && parentId != 0 {
 			for _, mid2 := range menuIdsModel {
-				if mid2["menu_id"].(int64) == mid["parent_id"].(int64) {
-					menuIds = append(menuIds, mid["menu_id"].(int64))
+				if mid2["menu_id"].(uint) == mid["parent_id"].(uint) {
+					menuIds = append(menuIds, int64(mid["menu_id"].(uint)))
 					break
 				}
 			}
 		} else {
-			menuIds = append(menuIds, mid["menu_id"].(int64))
+			menuIds = append(menuIds, int64(mid["menu_id"].(uint)))
 		}
 	}
 
