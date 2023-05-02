@@ -341,21 +341,24 @@ func (t UserModel) WithMenus() UserModel {
 	}
 
 	var menuIds []int64
-
 	for _, mid := range menuIdsModel {
 		fmt.Printf("Type of parent_id: %T, Type of menu_id: %T\n", mid["parent_id"], mid["menu_id"])
 
 		parentIDBytes, _ := mid["parent_id"].([]uint8)
 		menuIDBytes, _ := mid["menu_id"].([]uint8)
 
-		parentID := binary.BigEndian.Uint32(append([]byte{0}, parentIDBytes...))
-		menuID := binary.BigEndian.Uint32(append([]byte{0}, menuIDBytes...))
+		padding := make([]byte, 4-len(parentIDBytes))
+		parentID := binary.BigEndian.Uint32(append(padding, parentIDBytes...))
+
+		padding = make([]byte, 4-len(menuIDBytes))
+		menuID := binary.BigEndian.Uint32(append(padding, menuIDBytes...))
 
 		if parentID != 0 {
 			found := false
 			for _, mid2 := range menuIdsModel {
 				mid2MenuIDBytes, _ := mid2["menu_id"].([]uint8)
-				mid2MenuID := binary.BigEndian.Uint32(append([]byte{0}, mid2MenuIDBytes...))
+				padding = make([]byte, 4-len(mid2MenuIDBytes))
+				mid2MenuID := binary.BigEndian.Uint32(append(padding, mid2MenuIDBytes...))
 
 				if mid2MenuID == parentID {
 					menuIds = append(menuIds, int64(menuID))
