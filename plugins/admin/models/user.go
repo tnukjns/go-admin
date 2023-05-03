@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"encoding/binary"
-	"fmt"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -342,8 +341,6 @@ func (t UserModel) WithMenus() UserModel {
 
 	var menuIds []int64
 	for _, mid := range menuIdsModel {
-		fmt.Printf("Type of parent_id: %T, Type of menu_id: %T\n", mid["parent_id"], mid["menu_id"])
-
 		parentIDBytes, _ := mid["parent_id"].([]uint8)
 		menuIDBytes, _ := mid["menu_id"].([]uint8)
 
